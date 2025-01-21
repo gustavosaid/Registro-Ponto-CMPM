@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Dados do Funcionário
+                </div>
+                <div class="card-body">
+                    <img class="img-thumbnail" src="{{ funcionario.foto.url }}" alt="{{ funcionario.nome }}">
+                    <p><strong>Nome:</strong> {{ funcionario.nome }}</p>
+                    <p><strong>Documento:</strong> {{ funcionario.cpf }}</p>
+                </div>
+            </div>
+            <form class="mt-3" method="POST" enctype="multipart/form-data"
+                action="{% url 'criar_coleta_faces' funcionario.id %}">
+                {% csrf_token %}
+                {{form}}            
+                <button type="submit" class="btn btn-warning">Extrair amostras</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

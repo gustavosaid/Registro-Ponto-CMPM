@@ -14,8 +14,8 @@ class Funcionario(models.Model):
 
 
     def save(self, *args, **kwargs):
-        seq = self.nome + '_FUNC' + str(randint(10000000, 9999999))
-        self.slug = slugify(seg)
+        seq = self.nome + '_FUNC' + str(randint(10000000, 99999999))
+        self.slug = slugify(seq)
         super().save(*args, **kwargs)
 
 
@@ -23,7 +23,7 @@ class ColetaFaces(models.Model):
     funcionario = models.ForeignKey(Funcionario,
         on_delete = models.CASCADE, related_name='funcionario_coletas')
     image = models.ImageField(upload_to='roi/')
-
+    
 
 
 class Treinamento(models.Model):
@@ -40,3 +40,9 @@ class Treinamento(models.Model):
         model = self.__class__
         if model.objects.exclude(id=self.id).exists():
             raise ValidationError('Só pode haver um arquivo salvo !')
+        
+    def validate_cpf(self, cpf):
+        if len(cpf) != 11:
+            raise serializers.ValidationError("O cpf deve ter 11 digitos")
+        return cpf  
+    

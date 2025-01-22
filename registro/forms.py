@@ -1,6 +1,7 @@
 from django import forms
 from .models import Funcionario, ColetaFaces
 
+
 class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario

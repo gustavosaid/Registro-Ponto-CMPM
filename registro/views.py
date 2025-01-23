@@ -73,8 +73,8 @@ def face_extract(context, funcionario,camera_detection):
         return context
 
     amostra = 0  # Amostra inicial
-    numeroAmostras = 10  # Número de amostras para extrair
-    largura, altura = 220, 220  # Dimensão da face (quadrada)
+    numeroAmostras = 3  # Número de amostras para extrair
+    largura, altura = 240, 240  # Dimensão da face (quadrada)
     file_paths = []  # Lista de caminhos das amostras
 
     while amostra < numeroAmostras:  # Loop para capturar 10 amostras

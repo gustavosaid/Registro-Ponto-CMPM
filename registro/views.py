@@ -15,6 +15,8 @@ def gen_detect_face(camera):
         if frame is not None:
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        else:
+            print("Frame não detectado. Ignorando...")
 
 # Streaming para detecção facial
 def face_detection(request):
@@ -83,16 +85,19 @@ def face_extract(context, funcionario):
         funcionario__slug=funcionario.slug).count()
     
     print(num_coletas)
-    
-    context = {}
+
     
     if num_coletas >= 10:
-        context['error'] = 'Limite máximo de coletas atingido.'
+        context['erro'] = 'Limite máximo de coletas atingido.'
     else:
             # Extrair as faces usando o método da câmera
-            file_paths = extract(camera_detection, funcionario.slug)
-            print(file_paths)
+        file_paths = extract(camera_detection, funcionario.slug)
+        print(file_paths)
+
+
+
     return context
+        
 
 # Criação de coletas de faces
 def criar_coleta_faces(request, funcionario_id):

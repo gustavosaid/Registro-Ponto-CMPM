@@ -125,3 +125,57 @@ def criar_coleta_faces(request, funcionario_id):
         context = face_extract(funcionario, camera_detection) #chama funcao para extrair funcionario
 
     return render(request, 'criar_coleta_faces.html', context)
+<<<<<<< HEAD
+=======
+
+def face_extract(context, funcionario,camera_detection):
+    num_coletas = ColetaFaces.objects.filter(
+        funcionario__slug=funcionario.slug).count()
+
+    print(num_coletas)  # Quantidade de imagens que o usuário já cadastrou.
+
+    if num_coletas >= 10:
+        context['error'] = 'Limite máximo de coletas atingido.'
+        return context
+
+    amostra = 0  # Amostra inicial
+    numeroAmostras = 3  # Número de amostras para extrair
+    largura, altura = 240, 240  # Dimensão da face (quadrada)
+    file_paths = []  # Lista de caminhos das amostras
+
+    while amostra < numeroAmostras:  # Loop para capturar 10 amostras
+        ret, frame = camera_detection.get_frame()  # Captura o frame da câmera
+
+        # Verifica se o frame foi capturado corretamente
+        if not ret or frame is None:
+            print("Falha ao capturar o frame. Tentando novamente...")
+            continue  # Passa para a próxima iteração do loop
+
+        crop = camera_detection.sample_faces(frame)  # Captura a face no frame
+
+        if crop is not None:  # Se uma face for detectada
+            amostra += 1  # Incrementa o contador de amostras
+
+            # Redimensiona e converte a face para tons de cinza
+            face = cv2.resize(crop, (largura, altura))
+            imagemCinza = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+
+            # Define o caminho para salvar a imagem
+            file_name_path = f'./tmp/{funcionario.slug}_{amostra}.jpg'
+            print(f"Salvando imagem: {file_name_path}")
+
+            cv2.imwrite(file_name_path, imagemCinza)  # Salva a imagem
+            file_paths.append(file_name_path)  # Adiciona à lista de caminhos
+        else:
+            print("Nenhuma face detectada no frame atual.")
+
+        if amostra >= numeroAmostras:
+            break  # Encerra o loop após atingir o número de amostras desejado
+
+    camera_detection.restart()  # Reinicia a câmera após as capturas
+
+    print(f"Arquivos salvos: {file_paths}")
+    return context
+
+            
+>>>>>>> origin/main

@@ -4,6 +4,7 @@ import time
 
 class VideoCamera(object):
     def __init__(self):
+<<<<<<< HEAD
         # Abre a câmera
         self.video = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         # Inicializa o classificador de face
@@ -12,6 +13,15 @@ class VideoCamera(object):
         if not self.video.isOpened():
             print("Erro: Não foi possível abrir a câmera. Verifique se está conectada.")
             raise Exception("Falha ao acessar a câmera.")
+=======
+        # Inicializa o classificador de face
+        self.face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+        # Abre a câmera
+        self.video = cv2.VideoCapture(0)
+
+        if not self.video.isOpened():
+            print("Erro: Não foi possível abrir a câmera. Verifique se está conectada.")
+>>>>>>> origin/main
         
         # Diretório para salvar imagens temporárias
         self.img_dir = "./tmp"
@@ -25,6 +35,7 @@ class VideoCamera(object):
     def restart(self):
         # Reinicia a câmera
         self.video.release()
+<<<<<<< HEAD
         self.video = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     def get_frame(self):
@@ -32,6 +43,14 @@ class VideoCamera(object):
         max_attempts = 5
         attempts = 0
         ret, frame = self.video.read()
+=======
+        self.video = cv2.VideoCapture(0)
+
+    def get_frame(self):
+        # Número máximo de tentativas para capturar o frame
+        max_attempts = 10
+        attempts = 0
+>>>>>>> origin/main
 
         while attempts < max_attempts:
             ret, frame = self.video.read()
@@ -41,7 +60,11 @@ class VideoCamera(object):
 
             attempts += 1
             print(f"Tentativa {attempts} de {max_attempts}: Falha ao capturar o frame.")
+<<<<<<< HEAD
             time.sleep(1)  # Aguarda 0,5 segundo antes de tentar novamente
+=======
+            time.sleep(0.5)  # Aguarda 0,5 segundo antes de tentar novamente
+>>>>>>> origin/main
 
         # Após várias tentativas, reinicia a câmera e retorna erro
         print("Erro: Timeout ao tentar capturar o frame. Reinicializando a câmera...")
@@ -82,7 +105,10 @@ class VideoCamera(object):
 
     def sample_faces(self, frame):
         # Verifica se o frame é válido
+<<<<<<< HEAD
         
+=======
+>>>>>>> origin/main
         if frame is None:
             print("Frame inválido recebido. Abortando detecção.")
             return None
@@ -93,9 +119,17 @@ class VideoCamera(object):
             frame, minNeighbors=20, minSize=(30, 30), maxSize=(400, 400)
         )
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
         # Retorna a primeira face encontrada
         for (x, y, w, h) in faces:
             cropped_face = frame[y:y + h, x:x + w]
             return cropped_face
 
+<<<<<<< HEAD
         return None
+=======
+        return None
+>>>>>>> origin/main

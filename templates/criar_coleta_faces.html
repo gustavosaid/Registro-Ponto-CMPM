@@ -15,6 +15,8 @@
             </div>
 
             <div class="col-md-5 col-lg-5">
+                {% if not extracao_ok %} <!--SE NAO TIVER EXTRACAO OK, MOSTRA A CAMERA PARA USUARIO -->
+                <!-- CAMERA -->
                 <div class="p-3 bg-warning bg-opacity-10 border border-warning alert alert-warning text-center">
                     <i class="bi bi-exclamation-triangle-fill"></i>
                     <p>Centralize seu rosto antes de extrair as amostras.</p>
@@ -31,6 +33,35 @@
                     </button>
                     <input type="hidden" id="cliked" name="cliked" value="False">
                 </form>
+                <!-- FINALIZA CAMERA -->
+
+                {% else %} <!-- se estracao ok, mostra as imagens extraidas e salvas -->
+
+                <div class="p-3 bg-success bg-opacity-10 border border-success rounded mb-3">
+                    Amostras coletadas com sucesso
+                </div>
+
+                <h3>Amostras Salvas - Ok</h3>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for file_path in file_paths %}
+                    <div class="col-2 mb-3">
+                        <div class="img-div">
+                            <img src="{{ file_path.image.url }}" alt="Face sample" class="card-img-top" width="50">
+                            <div class="card-body text-center">
+                                <h5 class="counter">{{ forloop.counter }}</h5>
+                                <h5 class="card-title">Face {{ forloop.counter }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- FINALIZA EXTRAÇÃO -->
+
+                {% endif %}
+
+                 {% if erro %} <!--Evento caso o usuario clicar 2 vezes no botao -->
+                    <h3 class="text-danger"> {{erro}}</h3>
+                {% endif %}
             </div>
         </div>
     </div>

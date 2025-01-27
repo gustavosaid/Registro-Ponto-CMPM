@@ -1,4 +1,5 @@
 import cv2
+import os 
 from django.shortcuts import render, redirect
 from django.http import StreamingHttpResponse
 from .forms import FuncionarioForm
@@ -15,6 +16,8 @@ def gen_detect_face(camera):
         if frame is not None:
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        else:
+            print("Frame não detectado. Ignorando...")
 
 # Streaming para detecção facial
 def face_detection(request):
@@ -82,20 +85,34 @@ def face_extract(context, funcionario):
     num_coletas = ColetaFaces.objects.filter(
         funcionario__slug=funcionario.slug).count()
     
-    print(num_coletas)
+    print(num_coletas) # quantidade de imagens que o funcionario tem cadastrado
+
     
-    context = {}
-    
-    if num_coletas >= 10:
-        context['error'] = 'Limite máximo de coletas atingido.'
+    if num_coletas >= 5: #verifica se limite de coletas foi atingido
+        context['erro'] = 'Limite máximo de coletas atingido.'
     else:
             # Extrair as faces usando o método da câmera
-            file_paths = extract(camera_detection, funcionario.slug)
-            print(file_paths)
+        file_paths = extract(camera_detection, funcionario.slug)
+        print(file_paths)#path rostos
+        
+        for path in file_paths:
+        #cria uma instancia de ColetaFaces e salva a imagem
+            coleta_face = ColetaFaces.objects.create(funcionario=funcionario)
+            coleta_face.image.save(os.path.basename(path), open(path,'rb'))
+            os.remove(path) #remove o arquivo temporario apos salvamento
+        
+        #atualiza o contexto com coletas salvas
+        context['file_paths'] = ColetaFaces.objects.filter(
+            funcionario__slug=funcionario.slug)
+        context['extracao_ok'] = True #Define sinalizador de sucesso
+        
+
     return context
+        
 
 # Criação de coletas de faces
 def criar_coleta_faces(request, funcionario_id):
+    print(funcionario_id) #id do funcionario cadastrado
     funcionario = Funcionario.objects.get(id=funcionario_id)
     
     botao_clicado = request.POST.get("cliked", "False") == "True"
@@ -103,6 +120,7 @@ def criar_coleta_faces(request, funcionario_id):
     context = {
         'funcionario': funcionario,
         'face_detection': face_detection,
+        'valor_botao': botao_clicado,
     }
 
     if botao_clicado:

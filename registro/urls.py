@@ -6,5 +6,6 @@ urlpatterns = [
     path('criar_coleta_faces/<int:funcionario_id>', criar_coleta_faces, name='criar_coleta_faces'),
     path('face_detection/', face_detection, name='face_detection'),
     
+    
 ]
 

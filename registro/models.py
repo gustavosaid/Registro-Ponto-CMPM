@@ -7,11 +7,11 @@ class Funcionario(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     foto = models.ImageField(upload_to='foto/') 
     nome = models.CharField(max_length=100) 
-    cpf = models.CharField(max_length=20)
-
+    cpf = models.CharField(max_length=11)
+    
     def __str__ (self):
         return self.nome
-
+    
 
     def save(self, *args, **kwargs):
         seq = self.nome + '_FUNC' + str(randint(10000000, 99999999))
@@ -40,9 +40,5 @@ class Treinamento(models.Model):
         model = self.__class__
         if model.objects.exclude(id=self.id).exists():
             raise ValidationError('Só pode haver um arquivo salvo !')
-        
-    def validate_cpf(self, cpf):
-        if len(cpf) != 11:
-            raise serializers.ValidationError("O cpf deve ter 11 digitos")
-        return cpf  
+         
     

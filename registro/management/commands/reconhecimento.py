@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 print("Erro ao acessar a camera")
                 break
             
-            frame = cv2.resize(frame,(480,360))
+            frame = cv2.resize(frame,(550,500))
             imagemCinza = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
             faces_detectadas = face_cascade.detectMultiScale(imagemCinza,scaleFactor=1.1, minNeighbors=5,minSize=(30, 30), maxSize=(400,400))
             
@@ -53,7 +53,7 @@ class Command(BaseCommand):
                 if funcionario:
                     cv2.putText(frame, str(funcionario.nome), (x, y + a + 30), font, 1, (0, 255, 0), 2)
                 else:
-                    cv2.putText(frame, "Nenhum usuário encontrado", (x, y+a+30), font, 1, (0, 0, 255), 2)
+                    cv2.putText(frame, "Nenhum usuario encontrado", (x, y+a+30), font, 1, (0, 0, 255), 2)
                     
             cv2.imshow("Reconhecimento Facial", frame)
             

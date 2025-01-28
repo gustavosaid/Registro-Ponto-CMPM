@@ -41,7 +41,7 @@ def criar_funcionario(request):
 # Função de extração de imagens e retornar o file_path
 def extract(camera_detection, funcionario_slug):
     amostra = 0
-    numero_amostras = 5
+    numero_amostras = 1
     largura, altura = 280, 280
     file_paths = []
     max_falhas = 10
@@ -88,7 +88,7 @@ def face_extract(context, funcionario):
     print(num_coletas) # quantidade de imagens que o funcionario tem cadastrado
 
     
-    if num_coletas >= 5: #verifica se limite de coletas foi atingido
+    if num_coletas >= 50: #verifica se limite de coletas foi atingido
         context['erro'] = 'Limite máximo de coletas atingido.'
     else:
             # Extrair as faces usando o método da câmera
@@ -129,3 +129,13 @@ def criar_coleta_faces(request, funcionario_id):
         context = face_extract(context, funcionario)  # Chama função para extrair funcionário
 
     return render(request, 'criar_coleta_faces.html', context)
+
+def editar_funcionario(request, cpf):
+    funcionario = get_object_or_404(Funcionario, cpf=cpf)  # Encontra o funcionário pelo CPF
+    form = FuncionarioForm(request.POST or None, instance=funcionario)
+
+    if form.is_valid():
+        form.save()  # Salva o formulário
+        return redirect('criar_coleta_faces')  # Redireciona para onde quiser
+
+    return render(request, 'criar_coleta_faces.html', {'form': form})

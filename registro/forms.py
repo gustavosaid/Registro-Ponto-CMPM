@@ -5,20 +5,21 @@ from django.utils import timezone
 class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario
-        fields = ['foto', 'nome', 'cpf',]
+        fields = ['foto', 'nome', 'cpf','observacao']
         widgets = {
-            'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome completo'}),
-            'cpf': forms.TextInput(attrs={'placeholder': 'Digite seu CPF'}),
+            'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome completo.'}),
+            'cpf': forms.TextInput(attrs={'placeholder': 'Digite seu CPF.'}),
+            'observacao': forms.TextInput(attrs={'placeholder': 'Digite a informação.'}),
             
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        if self.instance and self.instance.pk:
-            # Se a instância (funcionário) já existir, preenche a foto com o valor atual
-            self.fields['foto'].required = False  # Torna a foto opcional
-        
+        if not self.instance.pk or not self.instance.foto:
+            self.fields['foto'].required = True  # Torna a foto obrigatória se não houver uma imagem
+        else:
+            self.fields['foto'].required = False  # Permite que a foto seja opcional se já existir
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
             
@@ -31,7 +32,6 @@ class FuncionarioForm(forms.ModelForm):
         return self.cleaned_data.get('foto')  # Retorna a foto inserida pelo usuário
             
            
-
     # Validação do CPF
     def clean_cpf(self):
         cpf = self.cleaned_data.get('cpf')  # Acessando corretamente o CPF
@@ -44,19 +44,25 @@ class FuncionarioForm(forms.ModelForm):
         
         # Verifica se já existe um funcionário com o CPF fornecido
         if funcionario:
-            # Se o funcionário já está cadastrado, preenche o formulário com seus dados
-            self.instance = funcionario  # Atribui a instância do funcionário ao formulário
-
-            # Preenche os campos do formulário com os dados do funcionário
+            # Se o CPF já estiver cadastrado, preenche os dados do funcionário no formulário
+            self.instance = funcionario  # Atribui o funcionário ao formulário
             self.initial['nome'] = funcionario.nome
             self.initial['foto'] = funcionario.foto
+            self.initial['observacao'] = funcionario.observacao
+            
+            # Não permite alteração no nome, foto ou observação
+            self.fields['nome'].widget.attrs['readonly'] = True
+            self.fields['foto'].widget.attrs['readonly'] = True
+            self.fields['observacao'].widget.attrs['readonly'] = True
+        return cpf  # Retorna o CPF validado
 
         return cpf  # Retorna o CPF validado
 
     def save(self, commit=True):
-        """
-        Sobrescreve o método save para definir a data e hora da modificação automaticamente.
-        """
+    #     """
+    #     Sobrescreve o método save para definir a data e hora da modificação automaticamente.
+    #     """
+    
         instance = super().save(commit=False)
         instance.dataHora = timezone.now()
         if commit:
@@ -95,7 +101,7 @@ class ColetaFacesForm(forms.ModelForm):
 
     class Meta:
         model = ColetaFaces
-        fields = ['images']
+        fields = ['images', 'observacao']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

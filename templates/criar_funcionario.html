@@ -5,15 +5,28 @@
 <body class="d-flex justify-content-center align-items-center vh-100">
 
     <div class="row align-items-center justify-content-center container">
-        <form class="col-md-6 border shadow-sm p-3" method="POST" enctype="multipart/form-data">
+        <form class="col-md-5 border shadow-sm p-4" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <h2>Controle de ponto</h2>
             {% csrf_token %}
             {{ form }}
             {% if form.errors %}
             {% endif %}
-            <button class="btn btn-outline-primary mt-3" type="submit">Salvar e continuar</button>
+
+            <div class="d-grid gap-2">
+                <button class="btn btn-outline-success mt-3 " type="submit">Salvar e continuar</button>
         </form>
+
+    </div>
+    <form method="GET" action="{% url 'buscar_funcionario' %}">
+        <div class="form-group">
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" class="form-control" required>
+            <a href="../templates/buscar_funcionario.html">
+            <button class="btn btn-outline-warning mt-3 " type="submit">Ja é Cadastrado ?</button>
+        </div>
+        </form>
+    </form>
     </div>
 </body>
 {% endblock %}

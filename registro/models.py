@@ -7,8 +7,10 @@ from django.utils.timezone import now  # Para timestamps com timezone-aware
 class Funcionario(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     foto = models.ImageField(upload_to='foto/', null=True, blank=True)  #, blank=True para aceitar nullo, fazer isso e rodar migration de novo 
-    nome = models.CharField(max_length=100,  blank=True)
-    cpf = models.CharField(max_length=11)
+    nome = models.CharField(max_length=50,  blank=True)
+    cpf = models.CharField(max_length=11, unique=True)#evita cpf duplicado
+    observacao = models.CharField(max_length=50)
+    dataHora = models.DateTimeField(default=now) 
 
     def __str__(self):
         return self.nome
@@ -27,14 +29,12 @@ class ColetaFaces(models.Model):
     )
     image = models.ImageField(upload_to='roi/')
     created_at = models.DateTimeField(default=now, editable=False)  # Campo para data e hora da criação
+    observacao = models.CharField(max_length=50, null=True, blank=True)
     
-    def hora_formatada(self):
-        # Retorna a hora e minutos diretamente sem chamar __str__ no created_at
-        return self.created_at.strftime('%H:%M')
 
     def __str__(self):
         # Evitar recursão: Exibe a hora formatada diretamente
-        return f"Coleta de {self.funcionario.nome} em {self.hora_formatada()}"
+        return f"Coleta de {self.funcionario.nome} em {self.created_at.strftime('%d/%m/%Y %H:%M:%S')} " # caso queria pode colocar aqui - Observação: {self.observacao}
 
 
 class Treinamento(models.Model):

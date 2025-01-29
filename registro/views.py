@@ -38,6 +38,7 @@ def criar_funcionario(request):
 
     return render(request, 'criar_funcionario.html', {'form': form})
 
+
 # Função de extração de imagens e retornar o file_path
 def extract(camera_detection, funcionario_slug):
     amostra = 0
@@ -96,16 +97,17 @@ def face_extract(context, funcionario):
         print(file_paths)#path rostos
         
         for path in file_paths:
-        #cria uma instancia de ColetaFaces e salva a imagem
+            # Cria uma instância de ColetaFaces e salva a imagem
             coleta_face = ColetaFaces.objects.create(funcionario=funcionario)
-            coleta_face.image.save(os.path.basename(path), open(path,'rb'))
-            os.remove(path) #remove o arquivo temporario apos salvamento
+            coleta_face.image.save(os.path.basename(path), open(path, 'rb'))
+            coleta_face.observacao = funcionario.observacao  # Adiciona a observação
+            coleta_face.save()  # Salva a coleta com a observação
+            os.remove(path)  # Remove o arquivo temporário após salvamento
         
         #atualiza o contexto com coletas salvas
         context['file_paths'] = ColetaFaces.objects.filter(
             funcionario__slug=funcionario.slug)
         context['extracao_ok'] = True #Define sinalizador de sucesso
-        
 
     return context
         
@@ -115,27 +117,63 @@ def criar_coleta_faces(request, funcionario_id):
     print(funcionario_id) #id do funcionario cadastrado
     funcionario = Funcionario.objects.get(id=funcionario_id)
     
-    botao_clicado = request.POST.get("cliked", "False") == "True"
+    # Recebe a observação, se estiver no request
+    observacao = request.GET.get('observacao', funcionario.observacao)
     
+
+    if request.method == 'POST':
+        # Pega o valor de observação do POST, caso não tenha, mantém o valor atual
+        observacao = request.POST.get('observacao', funcionario.observacao)  # Se não houver observação no POST, usa a atual
+        
+        # Atualiza o campo observação do funcionário
+        funcionario.observacao = observacao
+        funcionario.save()  # Salva no banco de dados
+        
+    else:
+        # Se for GET, usamos a observação que já está no banco
+        observacao = funcionario.observacao
     context = {
         'funcionario': funcionario,
         'face_detection': face_detection,
-        'valor_botao': botao_clicado,
+        'observacao': observacao,  # Passa a observação para o template
     }
 
+    botao_clicado = request.POST.get("cliked", "False") == "True"
+    
     if botao_clicado:
         print("Cliquei em Extrair Imagens!")
-        # camera_detection = VideoCamera()
         context = face_extract(context, funcionario)  # Chama função para extrair funcionário
 
     return render(request, 'criar_coleta_faces.html', context)
 
-def editar_funcionario(request, cpf):
-    funcionario = get_object_or_404(Funcionario, cpf=cpf)  # Encontra o funcionário pelo CPF
-    form = FuncionarioForm(request.POST or None, instance=funcionario)
 
-    if form.is_valid():
-        form.save()  # Salva o formulário
-        return redirect('criar_coleta_faces')  # Redireciona para onde quiser
+def buscar_funcionario(request):
+    # Obtém o CPF da URL (query parameter)
+    cpf = request.GET.get('cpf')
+    
+    
+    if cpf:
+        funcionario = Funcionario.objects.filter(cpf=cpf).first()  # Busca o funcionário pelo CPF
+        if funcionario:
+            # Se o CPF já estiver cadastrado, preenche os campos no formulário
+            if request.method == 'POST':
+                # Se a requisição for POST, atualiza a observação
+                observacao = request.POST.get('observacao', funcionario.observacao)
+                funcionario.observacao = observacao
+                funcionario.save()  # Salva as alterações no banco
 
-    return render(request, 'criar_coleta_faces.html', {'form': form})
+            # Preenche o formulário com os dados do funcionário
+            form = FuncionarioForm(instance=funcionario)
+            
+            # Torna os campos apenas leitura (como desejado)
+            form.fields['foto'].widget.attrs['readonly'] = True
+            form.fields['nome'].widget.attrs['readonly'] = True
+            form.fields['observacao'].widget.attrs['readonly'] = True  # Torna a observação apenas leitura
+            
+            # Direciona para a página de coleta de faces (se o CPF já estiver cadastrado)
+            return redirect('criar_coleta_faces', funcionario_id=funcionario.id)
+        else:
+            # Se o CPF não foi encontrado, exibe um formulário em branco para cadastrar um novo funcionário
+            form = FuncionarioForm()
+    
+    return render(request, 'criar_funcionario.html', {'form': form})

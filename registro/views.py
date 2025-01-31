@@ -1,10 +1,13 @@
 import cv2
 import os 
+import re
 from django.shortcuts import render, redirect
 from django.http import StreamingHttpResponse
 from .forms import FuncionarioForm
 from .models import Funcionario, ColetaFaces
 from .camera import VideoCamera
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 
 # Instância da câmera global
 camera_detection = VideoCamera()
@@ -147,33 +150,30 @@ def criar_coleta_faces(request, funcionario_id):
     return render(request, 'criar_coleta_faces.html', context)
 
 
-def buscar_funcionario(request):
-    # Obtém o CPF da URL (query parameter)
-    cpf = request.GET.get('cpf')
-    
-    
-    if cpf:
-        funcionario = Funcionario.objects.filter(cpf=cpf).first()  # Busca o funcionário pelo CPF
-        if funcionario:
-            # Se o CPF já estiver cadastrado, preenche os campos no formulário
-            if request.method == 'POST':
-                # Se a requisição for POST, atualiza a observação
-                observacao = request.POST.get('observacao', funcionario.observacao)
-                funcionario.observacao = observacao
-                funcionario.save()  # Salva as alterações no banco
+def validar_cpf(cpf):
+    """ Valida se o CPF tem 11 dígitos numéricos """
+    return bool(re.fullmatch(r'\d{11}', cpf))
 
-            # Preenche o formulário com os dados do funcionário
-            form = FuncionarioForm(instance=funcionario)
-            
-            # Torna os campos apenas leitura (como desejado)
-            form.fields['foto'].widget.attrs['readonly'] = True
-            form.fields['nome'].widget.attrs['readonly'] = True
-            form.fields['observacao'].widget.attrs['readonly'] = True  # Torna a observação apenas leitura
-            
-            # Direciona para a página de coleta de faces (se o CPF já estiver cadastrado)
-            return redirect('criar_coleta_faces', funcionario_id=funcionario.id)
-        else:
-            # Se o CPF não foi encontrado, exibe um formulário em branco para cadastrar um novo funcionário
-            form = FuncionarioForm()
-    
-    return render(request, 'criar_funcionario.html', {'form': form})
+def buscar_funcionario(request):
+    # Obtém o CPF da URL e remove espaços extras
+    cpf = request.GET.get('cpf', '').strip()
+
+    # Validação do CPF: deve conter exatamente 11 números
+    # if not validar_cpf(cpf):
+    #     return redirect('criar_funcionario')
+
+    # Busca funcionário no banco de dados
+    funcionario = Funcionario.objects.filter(cpf=cpf).first()
+
+    if funcionario:
+        # Se o CPF já estiver cadastrado, redireciona para a página de coleta de faces
+        return redirect('criar_coleta_faces', funcionario_id=funcionario.id)
+
+    # Se não encontrou o funcionário, direciona para o cadastro
+    return redirect('criar_funcionario')
+
+def botton_buscaFuncionario(request):
+    return render(request,'buscar_funcionario.html')
+
+    # cpf = self.cleaned_data.get('cpf')  # Acessando corretamente o CPF
+

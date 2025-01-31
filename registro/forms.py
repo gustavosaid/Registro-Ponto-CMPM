@@ -1,6 +1,7 @@
 from django import forms
 from .models import Funcionario, ColetaFaces
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class FuncionarioForm(forms.ModelForm):
     class Meta:
@@ -16,68 +17,53 @@ class FuncionarioForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        if not self.instance.pk or not self.instance.foto:
-            self.fields['foto'].required = True  # Torna a foto obrigatória se não houver uma imagem
-        else:
-            self.fields['foto'].required = False  # Permite que a foto seja opcional se já existir
+        # if not self.instance.pk or not self.instance.foto:
+        #     self.fields['foto'].required = True  # Torna a foto obrigatória se não houver uma imagem
+        # else:
+        #     self.fields['foto'].required = False  # Permite que a foto seja opcional se já existir
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
             
-    def clean_foto(self):
+            
+    # def clean_foto(self):
         
-        # Caso não tenha sido selecionada uma nova foto, mantemos a foto anterior
-        if not self.cleaned_data.get('foto'):
-            # Mantém a foto existente
-            return self.instance.foto  # Retorna a foto atual do funcionário
-        return self.cleaned_data.get('foto')  # Retorna a foto inserida pelo usuário
+    #     # Caso não tenha sido selecionada uma nova foto, mantemos a foto anterior
+    #     if not self.cleaned_data.get('foto'):
+    #         # Mantém a foto existente
+    #         return self.instance.foto  # Retorna a foto atual do funcionário
+    #     return self.cleaned_data.get('foto')  # Retorna a foto inserida pelo usuário
             
            
-    # Validação do CPF
+    #Validação do CPF
     def clean_cpf(self):
         cpf = self.cleaned_data.get('cpf')  # Acessando corretamente o CPF
 
-        # Verifica se o CPF tem exatamente 11 caracteres
-        if len(cpf) != 11:
-            raise forms.ValidationError("O CPF deve ter exatamente 11 caracteres.")
-
-        funcionario = Funcionario.objects.filter(cpf=cpf).first()  # Busca o funcionário pelo CPF
+        # Verifica se já existe um funcionário com o CPF informado
+        if Funcionario.objects.filter(cpf=cpf).exists():
+            raise ValidationError("Funcionário já cadastrado.")
         
-        # Verifica se já existe um funcionário com o CPF fornecido
-        if funcionario:
-            # Se o CPF já estiver cadastrado, preenche os dados do funcionário no formulário
-            self.instance = funcionario  # Atribui o funcionário ao formulário
-            self.initial['nome'] = funcionario.nome
-            self.initial['foto'] = funcionario.foto
-            self.initial['observacao'] = funcionario.observacao
-            
-            # Não permite alteração no nome, foto ou observação
-            self.fields['nome'].widget.attrs['readonly'] = True
-            self.fields['foto'].widget.attrs['readonly'] = True
-            self.fields['observacao'].widget.attrs['readonly'] = True
-        return cpf  # Retorna o CPF validado
+        return cpf
 
-        return cpf  # Retorna o CPF validado
 
     def save(self, commit=True):
     #     """
     #     Sobrescreve o método save para definir a data e hora da modificação automaticamente.
     #     """
-    
         instance = super().save(commit=False)
         instance.dataHora = timezone.now()
         if commit:
             instance.save()
         return instance
     
-    def editar_funcionario(request, cpf):
-        funcionario = get_object_or_404(Funcionario, cpf=cpf)  # Encontra o funcionário pelo CPF
-        form = FuncionarioForm(request.POST or None, instance=funcionario)
+    # def editar_funcionario(request, cpf):
+    #     funcionario = get_object_or_404(Funcionario, cpf=cpf)  # Encontra o funcionário pelo CPF
+    #     form = FuncionarioForm(request.POST or None, instance=funcionario)
 
-        if form.is_valid():
-            form.save()
-        return redirect('criar_coleta_faces')  # Redireciona para onde quiser
+    #     if form.is_valid():
+    #         form.save()
+    #     return redirect('criar_coleta_faces')  # Redireciona para onde quiser
 
-        return render(request, 'criar_coleta_faces.html', {'form': form})
+    #     return render(request, 'criar_coleta_faces.html', {'form': form})
 
 # Multiplos arquivos
 class MultipleFileInput(forms.ClearableFileInput):

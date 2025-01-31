@@ -8,8 +8,8 @@ class Funcionario(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     foto = models.ImageField(upload_to='foto/', null=True, blank=True)  #, blank=True para aceitar nullo, fazer isso e rodar migration de novo 
     nome = models.CharField(max_length=50,  blank=True)
-    cpf = models.CharField(max_length=11, unique=True)#evita cpf duplicado
-    observacao = models.CharField(max_length=50)
+    cpf = models.CharField(max_length=11, unique=True) #evita cpf duplicado
+    observacao = models.CharField(max_length=50, blank=True)
     dataHora = models.DateTimeField(default=now) 
 
     def __str__(self):

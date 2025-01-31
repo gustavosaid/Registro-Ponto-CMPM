@@ -1,7 +1,25 @@
-<form method="GET" action="{% url 'criar_funcionario' %}">
-    <div class="form-group">
-        <label for="cpf">CPF:</label>
-        <input type="text" id="cpf" name="cpf" class="form-control" required>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="row align-items-center justify-content-center container">
+        <form class="col-md-5 border shadow-sm p-4" method="GET" action="{% url 'buscar_funcionario' %}">
+            <div class="form-group">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" class="form-control" maxlength="11"
+                    title="Digite 11 números do CPF">
+                <button class="btn btn-outline-success mt-3" type="submit">Entrar</button>
+            </div>
+        </form>
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
     </div>
-    <button type="submit" class="btn btn-primary">o</button>
-</form>
+    {% endif %}
+    {% endblock %}
+</body>

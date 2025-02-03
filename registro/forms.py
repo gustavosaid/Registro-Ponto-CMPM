@@ -11,7 +11,6 @@ class FuncionarioForm(forms.ModelForm):
             'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome completo.'}),
             'cpf': forms.TextInput(attrs={'placeholder': 'Digite seu CPF.'}),
             'observacao': forms.TextInput(attrs={'placeholder': 'Digite a informação.'}),
-            
         }
 
     def __init__(self, *args, **kwargs):
@@ -24,6 +23,8 @@ class FuncionarioForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
             
+    def clean_observacao(self):
+        return self.cleaned_data['observacao'].lower()
             
     # def clean_foto(self):
         

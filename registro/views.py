@@ -172,8 +172,12 @@ def buscar_funcionario(request):
     # Se não encontrou o funcionário, direciona para o cadastro
     return redirect('criar_funcionario')
 
-def botton_buscaFuncionario(request):
-    return render(request,'buscar_funcionario.html')
-
+def encontra_funcionario(request):
+    return render(request,'encontra_funcionario.html')
     # cpf = self.cleaned_data.get('cpf')  # Acessando corretamente o CPF
+    
+    
+def relatorio_power_bi(request):
+    url_relatorio = 'Relatorio-novo.pbix' #link da url do power bi
+    return render(request,'relatorio.html',{'url_relatorio':url_relatorio})
 

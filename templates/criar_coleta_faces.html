@@ -1,37 +1,51 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<style>
+    body {
+        background-color: rgb(234, 238, 238);
+    }
+</style>
+
 <body class="d-flex justify-content-center align-items-center vh-100">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-10 col-lg-8 border shadow-sm p-5 rounded">  <div class="text-center mb-4">
+            <div class="col-md-10 col-lg-8 border shadow-sm p-5 rounded bg-body">
+                <nav class="navbar bg-body ">
+                    <div class="container justify-content-center">
+                        <img src="../media/assets/brasaosuperior.png" alt="Brasao Camara Municipal" width="170" height="80">
+                    </div>
+                </nav>
+                <div class="text-center mb-4">
                     <h2 class="border-bottom pb-2">Dados do Funcionário</h2>
                 </div>
 
-                <div class="d-flex flex-column flex-lg-row gap-4">  <div class="col-md-5">
-                        <img class="img-fluid rounded-circle border border-dark border-3 mb-3" 
-                             src="{{ funcionario.foto.url }}" 
-                             alt="Foto do funcionário" 
-                             width="250">  <p><strong>Nome:</strong> {{ funcionario.nome }}</p>
+                <div class="d-flex flex-column flex-lg-row gap-4 ">
+                    <div class="col-md-5">
+                        <img class="img-fluid rounded-circle border border-dark border-3 mb-3"
+                            src="{{ funcionario.foto.url }}" alt="Foto do funcionário" width="250">
+                        <p><strong>Nome:</strong> {{ funcionario.nome }}</p>
                         <p><strong>Documento:</strong> {{ funcionario.cpf }}</p>
                     </div>
 
                     <div class="col-md-7">
                         {% if not extracao_ok %}
                         <div class="alert alert-warning text-center" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>  Centralize seu rosto antes de extrair as amostras.
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Centralize seu rosto antes de extrair
+                            as amostras.
                         </div>
 
-                        <img class="img-fluid rounded border border-dark border-3 mb-3" id="webcam" 
-                             src="{% url 'face_detection' %}" 
-                             width="400">  <form method="POST" action="{% url 'criar_coleta_faces' funcionario.id %}">
+                        <img class="img-fluid rounded border border-dark border-3 mb-3" id="webcam"
+                            src="{% url 'face_detection' %}" width="400">
+                        <form method="POST" action="{% url 'criar_coleta_faces' funcionario.id %}">
                             {% csrf_token %}
-                            <div class="mb-3">  <label for="observacao" class="form-label">Observação:</label>
-                                <input type="text" name="observacao" class="form-control" 
-                                       value="{{ funcionario.observacao }}">
+                            <div class="mb-3"> <label for="observacao" class="form-label">Observação:</label>
+                                <input type="text" name="observacao" class="form-control"
+                                    value="{{ funcionario.observacao }}">
                             </div>
 
-                            <button class="btn btn-warning btn-lg w-100" type="submit"  onclick="document.getElementById('cliked').value='True';">
+                            <button class="btn btn-warning btn-lg w-100" type="submit"
+                                onclick="document.getElementById('cliked').value='True';">
                                 Extrair amostras
                             </button>
                             <input type="hidden" id="cliked" name="cliked" value="False">
@@ -43,31 +57,32 @@
                         </div>
 
                         <h3>Amostras Salvas - Ok</h3>
-                <div class="d-flex flex-wrap gap-2">
-                    {% for file_path in file_paths %}
-                    <div class="col-2 mb-3">
-                        <div class="img-div">
-                            <img src="{{ file_path.image.url }}" alt="Face sample" class="card-img-top" width="50">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">Face {{ forloop.counter }}</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for file_path in file_paths %}
+                            <div class="col-2 mb-3">
+                                <div class="img-div">
+                                    <img src="{{ file_path.image.url }}" alt="Face sample" class="card-img-top"
+                                        width="50">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Face {{ forloop.counter }}</h5>
+                                    </div>
+                                </div>
                             </div>
+                            {% endfor %}
+                        </div>
+                        <!-- FINALIZA EXTRAÇÃO -->
+
+                        {% endif %}
+
+                        {% if erro %} <!--Evento caso o usuario clicar 2 vezes no botao -->
+                        <h3 class="text-danger"> {{erro}}</h3>
+                        {% endif %}
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{% url 'criar_funcionario' %}" class="btn btn-outline-primary">Voltar</a>
                         </div>
                     </div>
-                    {% endfor %}
-                </div>
-                <!-- FINALIZA EXTRAÇÃO -->
 
-                {% endif %}
-
-                {% if erro %} <!--Evento caso o usuario clicar 2 vezes no botao -->
-                <h3 class="text-danger"> {{erro}}</h3>
-                {% endif %}
-                <div class="d-grid gap-2 mt-3">
-                    <a href="{% url 'criar_funcionario' %}" class="btn btn-outline-primary">Voltar</a>
                 </div>
             </div>
-
-        </div>
-    </div>
 </body>
 {% endblock %}

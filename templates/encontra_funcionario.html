@@ -1,10 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    body {
+        background-color: rgb(234, 238, 238);
+    }
+</style>
 
 <body class="d-flex justify-content-center align-items-center vh-100">
     <div class="row align-items-center justify-content-center container">
-        <form class="col-md-5 border shadow-sm p-4" method="GET" action="{% url 'buscar_funcionario' %}">
+        <form class="col-md-5 border shadow-sm p-4 bg-body" method="GET" action="{% url 'buscar_funcionario' %}">
+            <nav class="navbar bg-body ">
+                <div class="container justify-content-center">
+                    <img src="../media/assets/brasaosuperior.png" alt="Brasao Camara Municipal" width="170" height="80">
+                </div>
+            </nav>
             <div class="form-group">
                 <label for="cpf">CPF:</label>
                 <input type="text" id="cpf" name="cpf" class="form-control" maxlength="11"

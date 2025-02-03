@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<body class="d-flex justify-content-center align-items-center vh-100 $theme-colors ">
+<style>
+    body{
+        background-color: rgb(234, 238, 238);
+    }
+</style>
 
+<body class="d-flex justify-content-center align-items-center vh-100 ">
 
     <div class="row align-items-center justify-content-center container">
-        <form class="col-md-5 border shadow-sm p-4" method="POST" enctype="multipart/form-data">
+        <form class="col-md-5 border shadow-sm p-4 bg-body" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <nav class="navbar bg-body">
-                <div class="container justify-content-center ">
+            <nav class="navbar bg-body ">
+                <div class="container justify-content-center">
                     <img src="../media/assets/brasaosuperior.png" alt="Brasao Camara Municipal" width="170" height="80">
                 </div>
             </nav>
@@ -25,11 +30,11 @@
             </div>
 
             <div class="d-grid gap-2 mt-3">
-                <a href="{% url 'botton_buscaFuncionario' %}" class="btn btn-outline-secondary">Já é Cadastrado ?</a>
+                <a href="{% url 'encontra_funcionario' %}" class="btn btn-outline-secondary">Já é Cadastrado ?</a>
             </div>
 
             <div class="d-grid gap-2 mt-4">
-                <a href="#" class="btn btn-outline-info">Relatório</a>
+                <a href="{%url 'relatorio'%}" class="btn btn-outline-info">Relatório</a>
             </div>
 
         </form>

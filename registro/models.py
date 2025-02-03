@@ -31,11 +31,16 @@ class ColetaFaces(models.Model):
     created_at = models.DateTimeField(default=now, editable=False)  # Campo para data e hora da criação
     observacao = models.CharField(max_length=50, null=True, blank=True)
     
-
+    def save(self, *args, **kwargs):
+            if self.observacao:
+                self.observacao = self.observacao.lower()  # Converte para minúsculas antes de salvar
+            super().save(*args, **kwargs)
+            
     def __str__(self):
         # Evitar recursão: Exibe a hora formatada diretamente
         return f"Coleta de {self.funcionario.nome} em {self.created_at.strftime('%d/%m/%Y %H:%M:%S')} " # caso queria pode colocar aqui - Observação: {self.observacao}
-
+    
+    
 
 class Treinamento(models.Model):
     modelo = models.FileField(upload_to='treinamento/')  # Arquivo .yml

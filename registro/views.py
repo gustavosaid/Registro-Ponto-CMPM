@@ -150,9 +150,9 @@ def criar_coleta_faces(request, funcionario_id):
     return render(request, 'criar_coleta_faces.html', context)
 
 
-def validar_cpf(cpf):
-    """ Valida se o CPF tem 11 dígitos numéricos """
-    return bool(re.fullmatch(r'\d{11}', cpf))
+# def validar_cpf(cpf):
+#     """ Valida se o CPF tem 11 dígitos numéricos """
+#     return bool(re.fullmatch(r'\d{11}', cpf))
 
 def buscar_funcionario(request):
     # Obtém o CPF da URL e remove espaços extras
@@ -178,6 +178,5 @@ def encontra_funcionario(request):
     
     
 def relatorio_power_bi(request):
-    url_relatorio = 'Relatorio-novo.pbix' #link da url do power bi
+    url_relatorio = 'https://app.powerbi.com/groups/me/reports/831c7dd8-2150-4a84-b1f4-72efcdd0a401/7e83bfac3956505ba3c4?experience=power-bi' #link da url do power bi
     return render(request,'relatorio.html',{'url_relatorio':url_relatorio})
-

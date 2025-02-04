@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario
-        fields = ['foto', 'nome', 'cpf','observacao']
+        fields = ['nome', 'cpf','observacao']
         widgets = {
             'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome completo.'}),
             'cpf': forms.TextInput(attrs={'placeholder': 'Digite seu CPF.'}),

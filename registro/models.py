@@ -6,7 +6,7 @@ from django.utils.timezone import now  # Para timestamps com timezone-aware
 
 class Funcionario(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
-    foto = models.ImageField(upload_to='foto/', null=True, blank=True)  #, blank=True para aceitar nullo, fazer isso e rodar migration de novo 
+    #foto = models.ImageField(upload_to='foto/', null=True, blank=True)  #, blank=True para aceitar nullo, fazer isso e rodar migration de novo 
     nome = models.CharField(max_length=50,  blank=True)
     cpf = models.CharField(max_length=11, unique=True) #evita cpf duplicado
     observacao = models.CharField(max_length=50, blank=True)

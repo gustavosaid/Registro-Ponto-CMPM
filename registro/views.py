@@ -177,6 +177,4 @@ def encontra_funcionario(request):
     # cpf = self.cleaned_data.get('cpf')  # Acessando corretamente o CPF
     
     
-def relatorio_power_bi(request):
-    url_relatorio = 'https://app.powerbi.com/groups/me/reports/831c7dd8-2150-4a84-b1f4-72efcdd0a401/7e83bfac3956505ba3c4?experience=power-bi' #link da url do power bi
-    return render(request,'relatorio.html',{'url_relatorio':url_relatorio})
+

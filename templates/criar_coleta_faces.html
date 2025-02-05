@@ -23,7 +23,9 @@
                 <div class="d-flex flex-column flex-lg-row gap-4 ">
                     <div class="col-md-5">
                         <img class="img-fluid rounded-circle border border-dark border-3 mb-3"
-                            src="{{ funcionario.foto.url }}" alt="Foto do funcionário" width="250">
+                        src="{% if funcionario.funcionario_coletas.last %}{{ funcionario.funcionario_coletas.last.image.url }}?
+                        t={{ funcionario.funcionario_coletas.last.created_at.timestamp }}
+                        {% else %}{{ funcionario.foto.url }}{% endif %}"  alt="Foto do funcionário" width="250">
                             
                         <p><strong>Nome:</strong> {{ funcionario.nome }}</p>
                         <p><strong>Documento:</strong> {{ funcionario.cpf }}</p>

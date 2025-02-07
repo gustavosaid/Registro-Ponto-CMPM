@@ -15,11 +15,14 @@
                     <img src="../media/assets/brasaosuperior.png" alt="Brasao Camara Municipal" width="170" height="80">
                 </div>
             </nav>
-            <div class="form-group">
+            <div class="d-grid gap-2 mt-3">
                 <label for="cpf">CPF:</label>
                 <input type="text" id="cpf" name="cpf" class="form-control" maxlength="11"
                     title="Digite 11 números do CPF">
                 <button class="btn btn-outline-success mt-3" type="submit">Entrar</button>
+            </div>
+            <div class="d-grid gap-2 mt-3">
+                <a href="{% url 'criar_funcionario' %}" class="btn btn-outline-primary">Voltar</a>
             </div>
         </form>
 

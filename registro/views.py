@@ -150,17 +150,9 @@ def criar_coleta_faces(request, funcionario_id):
     return render(request, 'criar_coleta_faces.html', context)
 
 
-# def validar_cpf(cpf):
-#     """ Valida se o CPF tem 11 dígitos numéricos """
-#     return bool(re.fullmatch(r'\d{11}', cpf))
-
 def buscar_funcionario(request):
     # Obtém o CPF da URL e remove espaços extras
     cpf = request.GET.get('cpf', '').strip()
-
-    # Validação do CPF: deve conter exatamente 11 números
-    # if not validar_cpf(cpf):
-    #     return redirect('criar_funcionario')
 
     # Busca funcionário no banco de dados
     funcionario = Funcionario.objects.filter(cpf=cpf).first()
@@ -174,7 +166,5 @@ def buscar_funcionario(request):
 
 def encontra_funcionario(request):
     return render(request,'encontra_funcionario.html')
-    # cpf = self.cleaned_data.get('cpf')  # Acessando corretamente o CPF
-    
     
 

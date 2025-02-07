@@ -22,10 +22,9 @@
 
                 <div class="d-flex flex-column flex-lg-row gap-4 ">
                     <div class="col-md-5">
-                        <img class="img-fluid rounded-circle border border-dark border-3 mb-3"
-                        src="{% if funcionario.funcionario_coletas.last %}{{ funcionario.funcionario_coletas.last.image.url }}?
-                        t={{ funcionario.funcionario_coletas.last.created_at.timestamp }}
-                        {% else %}{{ funcionario.foto.url }}{% endif %}"  alt="Foto do funcionário" width="250">
+                        <img class="img-fluid rounded border border-dark mb-3"
+                        src="{% if funcionario.funcionario_coletas.last %}{{ funcionario.funcionario_coletas.last.image.url }}
+                        ?t={{ funcionario.funcionario_coletas.last.created_at.timestamp }}{% else %}{{ funcionario.foto.url }}{% endif %}" alt="Foto do funcionário" width="250">
                             
                         <p><strong>Nome:</strong> {{ funcionario.nome }}</p>
                         <p><strong>Documento:</strong> {{ funcionario.cpf }}</p>
@@ -47,19 +46,19 @@
                                     value="{{ funcionario.observacao }}">
                             </div>
 
-                            <button class="btn btn-warning btn-lg w-100" type="submit"
+                            <button class="btn btn-outline-success btn-lg w-100" type="submit"
                                 onclick="document.getElementById('cliked').value='True';">
-                                Extrair amostras
+                                Extrair foto
                             </button>
                             <input type="hidden" id="cliked" name="cliked" value="False">
                         </form>
 
                         {% else %}
                         <div class="alert alert-success text-center" role="alert">
-                            Amostras coletadas com sucesso!
+                            Foto coletadas com sucesso!
                         </div>
 
-                        <h3>Amostras Salvas - Ok</h3>
+                        <h3>Fotos já coletadas !</h3>
                         <div class="d-flex flex-wrap gap-2">
                             {% for file_path in file_paths %}
                             <div class="col-2 mb-3">

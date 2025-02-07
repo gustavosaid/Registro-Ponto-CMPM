@@ -40,7 +40,6 @@ class ColetaFaces(models.Model):
         # Evitar recursão: Exibe a hora formatada diretamente
         return f"Coleta de {self.funcionario.nome} em {self.created_at.strftime('%d/%m/%Y %H:%M:%S')} " # caso queria pode colocar aqui - Observação: {self.observacao}
     
-    
 
 class Treinamento(models.Model):
     modelo = models.FileField(upload_to='treinamento/')  # Arquivo .yml

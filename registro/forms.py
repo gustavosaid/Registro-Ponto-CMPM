@@ -12,7 +12,7 @@ class FuncionarioForm(forms.ModelForm):
         widgets = {
             'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome completo.'}),
             'cpf': forms.TextInput(attrs={'placeholder': 'Digite seu CPF.'}),
-            'observacao': forms.TextInput(attrs={'placeholder': 'Digite a informação.'}),
+            'observacao': forms.TextInput(attrs={'placeholder': 'Digite o destino.'}),
         }
 
     def __init__(self, *args, **kwargs):

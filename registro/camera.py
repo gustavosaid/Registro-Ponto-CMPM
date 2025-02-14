@@ -5,9 +5,15 @@ import time
 class VideoCamera(object):
     def __init__(self):
         # Inicializa a câmera
-        self.video = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        self.video = cv2.VideoCapture(0,cv2.CAP_DSHOW)
         if not self.video.isOpened():
             raise Exception("Erro: Não foi possível abrir a câmera. Verifique se está conectada corretamente.")
+            # for i in range(5):
+            #     cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+            #     if cap.isOpened():
+            #         print(f"Câmera encontrada no índice {i}")
+            #         cap.release()
+        
 
         # Carrega o classificador Haar para detecção de faces
         cascade_path = "haarcascade_frontalface_default (3).xml"

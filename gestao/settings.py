@@ -29,7 +29,7 @@ FERNET_KEY = 'skdsIsr2BekL3cqDFqtdMFMbVGeac-964VatdoT4zy4='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['128.128.110.110', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition

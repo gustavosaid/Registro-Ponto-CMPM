@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'fernet_fields',
+    #'fernet_fields',
       
     #aplicação REST framework
     'rest_framework',

@@ -28,7 +28,7 @@ class Command(BaseCommand):
         model_path = os.path.join(settings.MEDIA_ROOT, treinamento.modelo.name) #classificadorEigen.yml
         reconhecedor.read(model_path)
         
-        camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        camera = cv2.VideoCapture(0)
         largura, altura = 220, 220
         font = cv2.FONT_HERSHEY_COMPLEX_SMALL
         

@@ -16,14 +16,19 @@
                 </div>
             </nav>
             <div class="d-grid gap-2 mt-3">
-                <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" class="form-control" maxlength="11"
-                    title="Digite 11 números do CPF">
-                <button class="btn btn-outline-success mt-3" type="submit">Entrar</button>
+                <label for="cpf">Nome:</label>
+                <input type="text" id="nome" name="nome" class="form-control" 
+                    placeholder="Digite o nome completo">
             </div>
-            <!-- <div class="d-grid gap-2 mt-3">
+            <div class="d-grid gap-2 mt-3">
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" class="form-control" maxlength="11"
+                placeholder="Digite 11 números do CPF">
+            <button class="btn btn-outline-success mt-3" type="submit">Entrar</button>
+        </div>
+            <div class="d-grid gap-2 mt-3">
                 <a href="{% url 'criar_funcionario' %}" class="btn btn-outline-primary">Voltar</a>
-            </div> -->
+            </div>
         </form>
 
         {% if messages %}

@@ -5,15 +5,9 @@ import time
 class VideoCamera(object):
     def __init__(self):
         # Inicializa a câmera
-        self.video = cv2.VideoCapture(0,cv2.CAP_DSHOW)
-        if not self.video.isOpened():
-            raise Exception("Erro: Não foi possível abrir a câmera. Verifique se está conectada corretamente.")
-            # for i in range(5):
-            #     cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-            #     if cap.isOpened():
-            #         print(f"Câmera encontrada no índice {i}")
-            #         cap.release()
-        
+        self.video = cv2.VideoCapture(0,cv2.CAP_MSMF)
+        # if not self.video.isOpened():
+        #     raise Exception("Erro: Não foi possível abrir a câmera. Verifique se está conectada corretamente.")
 
         # Carrega o classificador Haar para detecção de faces
         cascade_path = "haarcascade_frontalface_default (3).xml"
@@ -37,7 +31,7 @@ class VideoCamera(object):
         print("Reiniciando a câmera...")
         self.video.release()
         time.sleep(2)  # Aguarda 2 segundos antes de reiniciar
-        self.video = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        self.video = cv2.VideoCapture(0, cv2.CAP_MSMF)
         if not self.video.isOpened():
             raise Exception("Erro: Não foi possível reiniciar a câmera.")
 
@@ -87,12 +81,12 @@ class VideoCamera(object):
             #print("Nenhuma face detectada neste frame.")
 
         # Desenha a elipse para destacar a região de interesse (ROI)
-        cv2.ellipse(frame, (centro_x, centro_y), (a, b), 0, 0, 360, (0, 0, 255), 10)
+        #cv2.ellipse(frame, (centro_x, centro_y), (a, b), 0, 0, 360, (0, 0, 255), 10)
 
         # Desenha elipses ao redor das faces detectadas
         for (x, y, w, h) in faces:
             if x1 < x < x2 and y1 < y < y2 and (x + w) < x2 and (y + h) < y2:
-                cv2.ellipse(frame, (centro_x, centro_y), (a, b), 0, 0, 360, (0, 255, 0), 10)
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Retângulo verde
 
         # Codifica o frame como JPEG
         ret, jpeg = cv2.imencode('.jpg', frame)
@@ -131,3 +125,4 @@ class VideoCamera(object):
 
         print("Nenhuma face encontrada no frame para amostragem.")
         return None
+

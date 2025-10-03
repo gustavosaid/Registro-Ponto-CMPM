@@ -15,12 +15,15 @@ class FuncionarioForm(forms.ModelForm):
             'observacao': forms.TextInput(attrs={'placeholder': 'Digite o destino.'}),
         }
 
-    def __init__(self, *args, **kwargs):
+    '''Construtor to forumalario '''
+    def __init__(self, *args, **kwargs): 
+        '''Contrutor da classe pai. "ModelForm"'''
         super().__init__(*args, **kwargs)
     
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
             
+    '''limpar e validar o campo observação, convete para minusculo'''
     def clean_observacao(self):
         return self.cleaned_data['observacao'].lower()
     
@@ -33,17 +36,17 @@ class FuncionarioForm(forms.ModelForm):
 
         # Verifica se já existe um funcionário com esse CPF
         if Funcionario.objects.filter(cpf=cpf).exists():
-            raise ValidationError("Funcionário já cadastrado com este CPF.")
+            raise ValidationError("Funcionário já cadastrado !")
 
         # Verifica se o CPF é válido
         if not validar_cpf(cpf):
             raise ValidationError("CPF inválido. Digite um CPF válido.")
         return cpf
 
-
+    '''Salvar o formulario, salavando data e hora de modificação'''
     def save(self, commit=True):
-    #     Sobrescreve o método save para definir a data e hora da modificação automaticamente.
         instance = super().save(commit=False)
+        instance.cpf = self.cleaned_data['cpf']  # Usa o setter para criptografar
         instance.dataHora = timezone.now()
         if commit:
             instance.save()
@@ -52,7 +55,8 @@ class FuncionarioForm(forms.ModelForm):
 # Multiplos arquivos
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
-
+    
+'''Campo no formulario que permite upload de multiplos arquivos'''
 class MultipleFileField(forms.FileField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("widget", MultipleFileInput())
@@ -66,6 +70,7 @@ class MultipleFileField(forms.FileField):
             result = [single_file_clean(data, initial)]
         return result
 
+'''Formulario baseado no modelo ColetaFace no models.'''
 class ColetaFacesForm(forms.ModelForm):
     images = MultipleFileField()
 
@@ -73,6 +78,7 @@ class ColetaFacesForm(forms.ModelForm):
         model = ColetaFaces
         fields = ['images', 'observacao']
 
+    '''Método contrutor do formulario'''
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         

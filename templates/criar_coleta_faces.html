@@ -5,6 +5,10 @@
     body {
         background-color: rgb(234, 238, 238);
     }
+
+    video {
+        transform: scaleX(-1);
+    }
 </style>
 
 <body class="d-flex justify-content-center align-items-center vh-100">
@@ -13,19 +17,21 @@
             <div class="col-md-10 col-lg-8 border shadow-sm p-5 rounded bg-body">
                 <nav class="navbar bg-body ">
                     <div class="container justify-content-center">
-                        <img src="../media/assets/brasaosuperior.png" alt="Brasao Camara Municipal" width="170" height="80">
+                        <img src="../media/assets/brasaosuperior.png" alt="Brasao Camara Municipal" width="170"
+                            height="80">
                     </div>
                 </nav>
                 <div class="text-center mb-4">
-                    <h2 class="border-bottom pb-2">Dados do Funcionário</h2>
+                    <h2 class="border-bottom pb-2">Dados de Acesso</h2>
                 </div>
 
                 <div class="d-flex flex-column flex-lg-row gap-4 ">
                     <div class="col-md-5">
                         <img class="img-fluid rounded border border-dark mb-3"
-                        src="{% if funcionario.funcionario_coletas.last %}{{ funcionario.funcionario_coletas.last.image.url }}
-                        ?t={{ funcionario.funcionario_coletas.last.created_at.timestamp }}{% else %}{{ funcionario.foto.url }}{% endif %}" alt="Foto do funcionário" width="250">
-                            
+                            src="{% if funcionario.funcionario_coletas.last %}{{ funcionario.funcionario_coletas.last.image.url }}
+                        ?t={{ funcionario.funcionario_coletas.last.created_at.timestamp }}{% else %}{{ funcionario.foto.url }}{% endif %}" alt="Foto do funcionário"
+                            width="270">
+
                         <p><strong>Nome:</strong> {{ funcionario.nome }}</p>
                         <p><strong>Documento:</strong> {{ funcionario.cpf }}</p>
                     </div>
@@ -37,34 +43,43 @@
                             as amostras.
                         </div>
 
-                        <img class="img-fluid rounded border border-dark border-3 mb-3" id="webcam"
-                            src="{% url 'face_detection' %}" width="400">
+                        <!-- <img class="img-fluid rounded border border-dark border-3 mb-3" id="webcam"
+                            src="{% url 'face_detection' %}" width="400"> -->
+
+                        <h3>Captura de Foto</h3>
+
+                        <!-- codigo que abre a camera -->
+                        <video id="videoElement" autoplay
+                            class="img-fluid rounded border border-dark border-3 mb-3"></video>
+                        <canvas id="canvasElement" style="display: none;"></canvas>
+
                         <form method="POST" action="{% url 'criar_coleta_faces' funcionario.id %}">
                             {% csrf_token %}
-                            <div class="mb-3"> <label for="observacao" class="form-label">Observação:</label>
-                                <input type="text" name="observacao" class="form-control"
-                                    value="{{ funcionario.observacao }}">
+                            <div class="mb-3">
+                                <h5 for="observacao" class="form-label">Destino:</h5>
+                                <input type="text" id="observationInput" placeholder="Digite o destino"
+                                    class="form-control">
+
                             </div>
 
-                            <button class="btn btn-outline-success btn-lg w-100" type="submit"
-                                onclick="document.getElementById('cliked').value='True';">
-                                Extrair foto
-                            </button>
-                            <input type="hidden" id="cliked" name="cliked" value="False">
                         </form>
 
+                        <button class="btn btn-outline-success btn-lg w-100" id="captureButton">Capturar Foto</button>
+                        <button class="btn btn-primary w-100" id="sendButton" style="display: none;">Salvar
+                            Foto</button>
+
                         {% else %}
-                        <div class="alert alert-success text-center" role="alert">
+
+                        <div class="alert alert-success text-center" role="alert" id="foto-feedback">
                             Foto coletadas com sucesso!
                         </div>
 
-                        <h3>Fotos já coletadas !</h3>
+                        <h3>Fotos já coletadas!</h3>
                         <div class="d-flex flex-wrap gap-2">
-                            {% for file_path in file_paths %}
+                            {% for coleta in file_paths %}
                             <div class="col-2 mb-3">
                                 <div class="img-div">
-                                    <img src="{{ file_path.image.url }}" alt="Face sample" class="card-img-top"
-                                        width="50">
+                                    <img src="{{ coleta.image.url }}" alt="Face sample" class="card-img-top" width="50">
                                     <div class="card-body text-center">
                                         <h5 class="card-title">Face {{ forloop.counter }}</h5>
                                     </div>
@@ -72,19 +87,84 @@
                             </div>
                             {% endfor %}
                         </div>
-                        <!-- FINALIZA EXTRAÇÃO -->
-
                         {% endif %}
 
-                        {% if erro %} <!--Evento caso o usuario clicar 2 vezes no botao -->
+                        {% if erro %}
                         <h3 class="text-danger"> {{erro}}</h3>
                         {% endif %}
                         <div class="d-grid gap-2 mt-3">
                             <a href="{% url 'criar_funcionario' %}" class="btn btn-outline-primary">Voltar</a>
                         </div>
                     </div>
-
                 </div>
             </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById("videoElement");
+        const canvas = document.getElementById("canvasElement");
+        const captureButton = document.getElementById("captureButton");
+        const sendButton = document.getElementById("sendButton");
+        const observationInput = document.getElementById("observationInput"); // Campo de observação
+
+        // 🟢 Iniciar câmera no navegador
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Erro ao acessar a câmera:", err);
+            }
+        }
+
+        // 📸 Capturar imagem do vídeo e exibir no canvas
+        captureButton.addEventListener("click", () => {
+            const context = canvas.getContext("2d");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            sendButton.style.display = "block"; // Exibir botão de envio
+        });
+
+        // 📤 Enviar imagem e observação para o backend Django
+        sendButton.addEventListener("click", async () => {
+            const imageData = canvas.toDataURL("image/jpeg"); // Converte para Base64
+            const url = window.location.pathname;
+            const funcionario_id = url.split("/").pop();   // ID do funcionário (pegar dinamicamente)
+            const observacao = observationInput.value; // Valor da observação
+
+            if (!funcionario_id || isNaN(funcionario_id)) {
+                alert("ID do funcionário inválido.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/upload_image/?funcionario_id=${funcionario_id}&observacao=${encodeURIComponent(observacao)}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image: imageData })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("Imagem salva com sucesso!");
+                    // Atualiza a página ou faz qualquer outra ação para mostrar as imagens
+                    window.location.href = result.redirect_url; // Recarrega a página para atualizar a lista de imagens
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error("Erro ao enviar imagem:", error);
+                alert("Erro ao tentar capturar a imagem.");
+            }
+        });
+
+        // 🟢 Inicia a câmera quando a página carregar
+        startCamera();
+    </script>
+
 </body>
 {% endblock %}

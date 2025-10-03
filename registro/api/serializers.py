@@ -14,4 +14,4 @@ class TreinamentoSerializer(serializers.ModelSerializer):
 class ColetaFacesSerializer(serializers.ModelSerializer):
     class Meta:
         model = ColetaFaces
-        fields = ['image','created_at', 'observacao','funcionario_id']
+        fields = ['image','criacao', 'observacao','funcionario_id']

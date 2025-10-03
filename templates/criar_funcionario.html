@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<meta name="google-site-verification" content="0Usu5gc6LJtVi5FvOqvuZCwnLPkYdFGnh-GB2DY2ENY" />
 <style>
-    body{
+    body {
         background-color: rgb(234, 238, 238);
     }
 </style>
@@ -18,12 +18,13 @@
                 </div>
             </nav>
 
+            <div class="d-grid gap-2 mt-3">
+                {{ form }}
 
-            {{ form }}
+                {% if form.errors %}
 
-            {% if form.errors %}
-
-            {% endif %}
+                {% endif %}
+            </div>
 
             <div class="d-grid gap-2">
                 <button class="btn btn-outline-success mt-3" type="submit">Salvar e continuar</button>

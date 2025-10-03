@@ -1,3 +1,4 @@
+dentro de treinamento para treinar fotos e apagar 
 import os
 import numpy as np
 import cv2
@@ -45,7 +46,7 @@ class Command(BaseCommand):
             labels.append(coleta.funcionario.id)  # ID do funcionário
 
             # Exibe a data e hora da coleta
-            print(f"Imagem processada: {coleta.image.name} | Criada em: {coleta.criacao}")
+            print(f"Imagem processada: {coleta.image.name} | Criada em: {coleta.created_at}")
 
             # 🔥 Remove a imagem logo após ser processada
             try:
@@ -61,7 +62,6 @@ class Command(BaseCommand):
 
         # Realiza o treinamento do modelo
         try:
-            eigenFace.train(faces,labels)
             eigenFace.train(np.array(faces), np.array(labels))
             print(f"{len(faces)} imagens treinadas com sucesso.")
 
@@ -75,6 +75,8 @@ class Command(BaseCommand):
                 treinamento, _ = Treinamento.objects.get_or_create()
                 treinamento.modelo.save('classificadorEigen.yml', File(f))
 
+            # Remove o arquivo temporário
+            os.remove(model_filename)
 
             # Mensagens de status
             self.stdout.write(self.style.ERROR(f"Imagens com erro de carregamento: {erro_count}"))
@@ -82,3 +84,22 @@ class Command(BaseCommand):
 
         except Exception as e:
             print(f"Erro durante o treinamento ou salvamento do modelo: {e}")
+
+
+
+
+
+netsh advfirewall firewall add rule name="Django" dir=in action=allow protocol=TCP localport=8000
+
+
+liberar porta 8000
+netsh advfirewall firewall add rule name="Django Server" dir=in action=allow protocol=TCP localport=8000
+
+remover 
+netsh advfirewall firewall delete rule name="Django Server"
+
+
+rodar projeto no OPENSSL 
+python manage.py runserver_plus --cert-file certificado.pem --key-file chave_privada.pem
+
+

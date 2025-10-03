@@ -14,7 +14,7 @@ class Command(BaseCommand):
         """
 
         # Abre a câmera (0 é o índice padrão)
-        cap =  cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        cap =  cv2.VideoCapture(0, cv2.CAP_MSMF)
 
         if not cap.isOpened():
             self.stdout.write(self.style.ERROR('Erro ao abrir a câmera'))

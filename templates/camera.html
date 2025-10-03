@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento por Câmera</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        #status {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        video {
+            width: 80%;
+            max-width: 600px;
+            border: 3px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Monitoramento por Câmera</h1>
+    <p id="status">🔄 Conectando ao servidor...</p>
+    <video id="videoElement" autoplay></video>
+    <br>
+    <button onclick="iniciarCamera()">Ativar Câmera</button>
+
+    <script>
+        let ws;
+        function conectarWebSocket() {
+            ws = new WebSocket('ws://localhost/ws/camera/');
+
+            ws.onopen = () => {
+                console.log("✅ WebSocket conectado!");
+                iniciarCamera(); // Só inicia a câmera quando o WebSocket estiver pronto
+            };
+
+            ws.onerror = (error) => {
+                console.error("❌ Erro no WebSocket:", error);
+            };
+
+            ws.onclose = () => {
+                console.log("⚠️ WebSocket fechado. Tentando reconectar...");
+                setTimeout(conectarWebSocket, 3000);
+            };
+        }
+
+        function iniciarCamera() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    document.getElementById("videoElement").srcObject = stream;
+                    console.log("📷 Câmera iniciada com sucesso!");
+                })
+                .catch((error) => {
+                    console.error("❌ Erro ao acessar a câmera", error);
+                });
+        }
+
+        // Primeiro conecta ao WebSocket, depois inicia a câmera
+        conectarWebSocket();
+    </script>
+
+</body>
+
+</html>

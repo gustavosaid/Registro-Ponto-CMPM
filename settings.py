@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os 
 from pathlib import Path
-from cryptography.fernet import Fernet
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,28 +21,34 @@ STATIC_DIR = os.path.join(BASE_DIR,'static')
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'q+@2S7AOfqvbDY)EwOghl@61OYFY*Zhy@5zBFqMjWD3quyhNDq'
-FIELD_ENCRYPTION_KEY = 'pAIk1x28-RF2Jri8QomY8-UGTVv1hbvooYCdKScMNGs='
-FERNET_KEY = 'skdsIsr2BekL3cqDFqtdMFMbVGeac-964VatdoT4zy4='
+SECRET_KEY = 'django-insecure-vkgkqk$w0%&4n*5nw$-9tt!#fso116joe*tlleyvkx2s4irp5u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['128.128.110.110', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["128.128.110.24","localhost"]
+
+SECURE_SSL_REDIRECT = True  # Redireciona HTTP para HTTPS
+CSRF_COOKIE_SECURE = True  # Cookies seguros
+SESSION_COOKIE_SECURE = True  # Sessões seguras
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
-    'fernet_fields',
-      
+    "django_extensions",
+    'channels',
+
     #aplicação REST framework
     'rest_framework',
     #Aplicação 'registro'
@@ -58,8 +63,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'registro.middleware.Force404Middleware',  
-    'registro.middleware.BlockIPMiddleware',
 ]
 
 ROOT_URLCONF = 'gestao.urls'
@@ -81,7 +84,7 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = 'gestao.wsgi.application'
+ASGI_APPLICATION = 'gestao.asgi.application'
 
 
 # Database
@@ -89,8 +92,19 @@ WSGI_APPLICATION = 'gestao.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'registro',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'ssl': {
+                'ca': 'certificado.crt',
+                'cert': 'certificado.key',
+                'key': 'chave_privada.key',
+            },
+        },
     }
 }
 
@@ -128,6 +142,14 @@ TIME_ZONE = 'America/Sao_Paulo'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+
+
+# Configuração do Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 STATIC_URL = 'static/' #html, css
 STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')

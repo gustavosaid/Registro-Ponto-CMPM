@@ -11,7 +11,6 @@ import numpy as np
 from .forms import FuncionarioForm
 from .models import Funcionario, ColetaFaces
 from .camera import VideoCamera
-from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.base import ContentFile
 from django.db.models import Q
@@ -38,6 +37,7 @@ def face_detection(request):
         content_type='multipart/x-mixed-replace; boundary=frame'
     )
 
+@csrf_exempt
 # Criação de funcionário e redireciona para a coleta de faces
 def criar_funcionario(request):
     if request.method == 'POST':
